@@ -125,11 +125,13 @@ def handle_list_projects(args, users):
 
 
 def handle_add_task(args, users):
+    # Look up the project by title across all users
     project = find_project_anywhere(users, args.project)
     if project is None:
         print(f"Error: no project found with title '{args.project}'")
         return
 
+    # Create the task and attach it to the matching project
     task = Task(args.title, assigned_to=args.assigned_to)
     project.add_task(task)
 
@@ -137,16 +139,19 @@ def handle_add_task(args, users):
 
 
 def handle_complete_task(args, users):
+    # Look up the project by title across all users
     project = find_project_anywhere(users, args.project)
     if project is None:
         print(f"Error: no project found with title '{args.project}'")
         return
 
+    # Look up the task within that project
     task = project.find_task(args.task)
     if task is None:
         print(f"Error: no task found with title '{args.task}' in project '{project.title}'")
         return
 
+    # Goes through the @status.setter, so it's validated
     task.mark_complete()
     print(f"Marked task '{task.title}' complete in project '{project.title}'")
 

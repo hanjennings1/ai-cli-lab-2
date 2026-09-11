@@ -7,6 +7,7 @@ class Person:
     """
 
     def __init__(self, name, email):
+        # Reject empty or whitespace-only name/email
         if not name or not name.strip():
             raise ValueError("Name cannot be empty.")
         if not email or not email.strip():
@@ -16,4 +17,5 @@ class Person:
         self.email = email.strip()
 
     def __repr__(self):
+        # Generic representation any subclass inherits automatically
         return f"{self.__class__.__name__}(name={self.name!r}, email={self.email!r})"
