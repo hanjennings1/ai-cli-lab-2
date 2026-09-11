@@ -8,16 +8,24 @@ class Task:
         if not title or not title.strip():
             raise ValueError("Task title cannot be empty.")
 
-        # Guard against invalid status values up front
-        if status not in self.STATUS_CHOICES:
-            raise ValueError(f"Invalid status: {status!r}. Must be one of {self.STATUS_CHOICES}.")
-
         self.title = title.strip()
-        self.status = status
+        self.status = status  # goes through the @status.setter below, which validates
         self.assigned_to = assigned_to  # e.g. a contributor's name, or None if unassigned
 
+    @property
+    def status(self):
+        # Getter - just returns the stored value
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        # Setter - validates before allowing the change
+        if value not in self.STATUS_CHOICES:
+            raise ValueError(f"Invalid status: {value!r}. Must be one of {self.STATUS_CHOICES}.")
+        self._status = value
+
     def mark_complete(self):
-        #Updates this task's status to complete
+        # Updates this task's status to complete (validated by the setter)
         self.status = "complete"
 
     def to_dict(self):
@@ -37,3 +45,7 @@ class Task:
             status=data.get("status", "open"),
             assigned_to=data.get("assigned_to"),
         )
+
+    # Show title, status, and assignee for quick CLI debugging
+    def __repr__(self):
+        return f"Task(title={self.title!r}, status={self.status!r}, assigned_to={self.assigned_to!r})"

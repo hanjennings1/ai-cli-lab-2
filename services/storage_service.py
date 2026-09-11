@@ -19,11 +19,18 @@ class StorageService:
         if not os.path.exists(self.filepath):
             return []
 
-        # Read JSON and rebuild User objects (with nested Projects/Tasks)
-        with open(self.filepath, "r") as f:
-            data = json.load(f)
+        try:
+            # Read JSON and rebuild User objects (with nested Projects/Tasks)
+            with open(self.filepath, "r") as f:
+                data = json.load(f)
 
-        return [User.from_dict(user_data) for user_data in data]
+            return [User.from_dict(user_data) for user_data in data]
+
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            # File exists but is corrupted/malformed - don't crash,
+            # warn the user and start with an empty list instead
+            print(f"Warning: could not load data from {self.filepath} ({e}). Starting with no data.")
+            return []
 
     def save_users(self, users):
         # Make sure the data/ folder exists
