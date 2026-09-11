@@ -6,6 +6,7 @@ from models.task import Task
 from services.storage_service import StorageService
 from services.ai_client import OllamaChatClient
 from services.project_summary_service import ProjectSummaryService
+from utils.formatters import format_project_line
 
 
 def build_parser():
@@ -118,10 +119,10 @@ def handle_list_projects(args, users):
         print(f"{user.name} has no projects.")
         return
 
-    # Print each project with a quick task-count summary
+    # Print each project using the shared formatter
     print(f"Projects for {user.name}:")
     for project in user.projects:
-        print(f"  - {project.title} ({len(project.tasks)} task(s))")
+        print(format_project_line(project))
 
 
 def handle_add_task(args, users):
